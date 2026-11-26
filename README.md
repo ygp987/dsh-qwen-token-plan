@@ -4,10 +4,25 @@ DeepSeek Harness 的 **千问 AI 平台 Token Plan** 接入插件：把订阅变
 
 支持 DSH `0.2.1-rc.5` 及以上（在 `0.2.3-alpha.2` 上开发与验证）。
 
+## 界面预览
+
+### 概览
+
+![概览：套餐余量、每日 Token 用量与接入状态](docs/assets/overview.jpg)
+
+### 模型目录
+
+![模型目录：能力、上下文、最大输出与推理档位](docs/assets/models.jpg)
+
+### 设置
+
+![设置：模型 API Key、控制台 Cookie 与线路信息](docs/assets/settings.jpg)
+
+
 ## 功能
 
 - **模型线路**：按千问官方 DSH 指南接入 `https://token-plan.maas.qianwenaiapi.com/compatible-mode/v1`（OpenAI Chat Completions），在模型选择器里以「千问 Token Plan」出现，可选 `auto`、`qwen4-max`、`qwen3.8-max`、`qwen3.8-flash`、`deepseek-v4.1-flash`、`glm-5.3` 等。
-- **套餐总览**：套餐档位（Lite / Essential / Standard / Pro）、剩余百分比、剩余 Credits、月额度（含加油包）、5 小时额度、剩余天数、到期与重置时间、自动续费状态。
+- **套餐总览**：套餐档位（Lite / Essential / Standard / Pro）、剩余百分比、剩余 Credits、月额度（含已购加油包）、剩余天数、到期与重置时间、自动续费状态。
 - **每日用量**：直连控制台同源指标，按天汇总总 / 输入 / 输出 / 缓存命中 / 图片 Token，支持近 7 / 30 / 90 天；附每日明细表与缓存命中率。
 - **Harness 权益**：7 项权益（联网搜索增强、垂类搜索、网页解析、代码解释器、语音合成、语音识别、图像生成）的剩余 / 总量，以及带官方单价的权益服务目录。
 - **推理等级**：按官方文档为每个模型接上思考参数——Qwen4 / Qwen3.8 Max 走 `reasoning_effort`（低 / 中 / 高 / 超高），Qwen3.x、GLM 走 `thinking_budget`，DeepSeek V4 只有开 / 关；`glm-5.3` 这类仅思考模型不提供「关闭」。
