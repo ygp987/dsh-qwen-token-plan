@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Qianwen Token Plan",
+    "description": "Brings a Qianwen AI Platform Token Plan subscription into DSH: an OpenAI Chat Completions route for qwen4-max, Qwen3.8, DeepSeek and GLM models, plus plan quota, daily token usage and Harness benefits.",
+    "detail": "docs/DETAIL.md"
+  }
+}

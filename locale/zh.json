@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "千问 Token Plan",
+    "description": "把千问 AI 平台 Token Plan 订阅接入 DSH：提供 qwen4-max、Qwen3.8、DeepSeek、GLM 等模型的 OpenAI Chat Completions 线路，并展示套餐余量、每日 Token 用量与 Harness 权益。",
+    "detail": "docs/DETAIL.md"
+  }
+}

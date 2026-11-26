@@ -1,0 +1,8 @@
+# Qianwen Token Plan: model provider + quota console.
+# The API key and the console cookie are resolved through DSH credentials
+# (or ~/.dsh/.env); never write secrets into this file.
+- insert:
+    - id: qwen-token-plan
+      name: dsh-qwen-token-plan
+      config:
+        providerId: qwen-token-plan
