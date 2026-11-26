@@ -18,7 +18,21 @@ DeepSeek Harness 的 **千问 AI 平台 Token Plan** 接入插件：把订阅变
 
 ## 安装
 
-在 DSH 的 **插件 → 添加插件** 中填入本目录的绝对路径（本地目录安装），或：
+**方式 A：从 GitHub 安装（推荐）**
+
+在 DSH 的 **插件 → 添加插件** 中填入：
+
+```
+github:ygp987/dsh-qwen-token-plan
+```
+
+或：
+
+```sh
+dsh plugin --profile desktop add github:ygp987/dsh-qwen-token-plan
+```
+
+**方式 B：本地目录（开发）**
 
 ```sh
 dsh plugin --profile desktop add link:/绝对路径/dsh-qwen-token-plan
