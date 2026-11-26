@@ -12,7 +12,7 @@ const ok = (body) => new Response(JSON.stringify(body), {
 
 const envelope = (data) => ({ data: { DataV2: { data: { success: true, data } } } });
 
-function fakeGateway({ subscription, usage, quota, equity, models, benefits, daily }) {
+function fakeGateway({ subscription, usage, quota, equity, models, benefits, daily, addons = { total: 0, items: [] } }) {
   return async (url, init = {}) => {
     if (String(url).endsWith("/tool/user/info.json")) {
       return ok({ data: { secToken: "sec-token" } });
@@ -25,6 +25,7 @@ function fakeGateway({ subscription, usage, quota, equity, models, benefits, dai
     if (api.endsWith("/subscription")) return ok(envelope(subscription));
     if (api.endsWith("/usage")) return ok(envelope(usage));
     if (api.endsWith("/quota-config")) return ok(envelope(quota));
+    if (api.endsWith("/addon/list")) return ok(envelope(addons));
     if (api.includes("queryTokenPlanEquityInfo")) return ok(envelope(equity));
     if (api.includes("getModelMonitorDataWithOss")) {
       return ok({ data: { DataV2: { data: { success: true, data: daily } } } });
@@ -102,9 +103,12 @@ test("console plan reads tier, credits and remaining percentage", async () => {
   const plan = await client.plan();
   assert.equal(plan.specCode, "standard");
   assert.equal(plan.tierName, "Standard");
-  assert.equal(plan.monthlyCredits, 100_000);
-  assert.equal(plan.addonCredits, 20_000);
-  assert.equal(plan.remainingCredits, 45_500);
+  // Standard is 80,000 credits; the 20,000 in addon_quota is only the
+  // purchasable pack size, and this account owns none.
+  assert.equal(plan.monthlyCredits, 80_000);
+  assert.equal(plan.addonCredits, 0);
+  assert.equal(plan.addonActive, false);
+  assert.equal(plan.remainingCredits, 36_400);
   assert.equal(Math.round(plan.remainingPercent * 1000) / 1000, 45.5);
   assert.equal(plan.remainingDays, 22);
   assert.equal(plan.autoRenew, false);
@@ -181,4 +185,17 @@ test("route guard admits loopback requests and rejects rebinding", () => {
   assert.equal(trustedRequest({ headers: { host: "127.0.0.1:44707", "sec-fetch-site": "cross-site" } }, "127.0.0.1"), false);
   assert.equal(trustedRequest({ headers: { host: "127.0.0.1:44707", origin: "http://127.0.0.1:5555" } }, "127.0.0.1"), false);
   assert.equal(trustedRequest({ headers: { host: "127.0.0.1:44707", origin: "null" } }, "127.0.0.1"), false);
+});
+
+test("owned add-on packs extend the monthly credits", async () => {
+  const withAddon = {
+    ...fixture,
+    addons: { total: 1, items: [{ quota: 20_000 }] },
+  };
+  const client = new TokenPlanConsole({ cookie: "c", fetchImpl: fakeGateway(withAddon) });
+  const plan = await client.plan();
+  assert.equal(plan.addonCredits, 20_000);
+  assert.equal(plan.addonActive, true);
+  assert.equal(plan.monthlyCredits, 100_000);
+  assert.equal(plan.remainingCredits, 45_500);
 });
