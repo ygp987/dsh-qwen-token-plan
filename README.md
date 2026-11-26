@@ -103,6 +103,13 @@ locale/*.json      插件元数据（中 / 英）
 
 调试时可直接用 `node` 调用 `lib/console.js`（需要控制台 Cookie）验证网关响应；模型线路需要真实 Token Plan Key。
 
+## 致谢
+
+本插件在架构与协议上参考了两个 MIT 项目，版权声明与许可文本见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)：
+
+- [dsh-opencode-go](https://github.com/Duskriver/dsh-opencode-go)：DSH 设置分页 / 侧边栏 / 主面板的注册方式，以及 provider + 控制台的整体形态。
+- [dsh-qwen-token-plan-full](https://github.com/Fushena/dsh-qwen-token-plan-full)：千问控制台网关协议、Token Plan 订阅/用量/权益接口与思考参数映射。
+
 ## 许可
 
 MIT。
