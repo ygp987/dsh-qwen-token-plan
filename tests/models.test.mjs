@@ -67,3 +67,27 @@ test("endpoint discovery wins over non-advertised console rows", () => {
   assert.ok(!ids.includes("qwen3.6-plus"));
   assert.ok(!ids.includes("qwen-audio-3.0-realtime-plus"));
 });
+
+test("DeepSeek V4.1 Flash keeps vision while V4 Pro stays text", () => {
+  const catalog = new ModelCatalog();
+  const flash = catalog.find("deepseek-v4.1-flash");
+  const flash1017 = catalog.find("deepseek-v4.1-flash-1017");
+  const pro = catalog.find("deepseek-v4-pro");
+  assert.deepEqual(flash.input, ["text", "image"]);
+  assert.ok(flash.capabilities.includes("VU"));
+  assert.deepEqual(flash1017.input, ["text", "image"]);
+  assert.deepEqual(pro.input, ["text"]);
+  // A console row that omits VU must not erase the shipped vision capability.
+  catalog.setConsoleModels([{ modelId: "deepseek-v4.1-flash", capabilities: ["TG", "Reasoning"], editions: ["PERSONAL"], name: "DeepSeek-V4.1-Flash" }]);
+  assert.deepEqual(catalog.find("deepseek-v4.1-flash").input, ["text", "image"]);
+});
+
+test("GLM context and output limits follow the model pages", () => {
+  const catalog = new ModelCatalog();
+  for (const id of ["glm-5.3", "glm-5.2"]) {
+    const model = catalog.find(id);
+    assert.equal(model.contextWindow, 1_048_576);
+    assert.equal(model.maxTokens, 131_072);
+    assert.deepEqual(model.input, ["text"]);
+  }
+});

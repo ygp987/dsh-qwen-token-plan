@@ -24,7 +24,7 @@ export const inject = ["llm", "timer", "credentials", "webServer"];
 
 const DEFAULT_BASE_URL = "https://token-plan.maas.qianwenaiapi.com/compatible-mode/v1";
 const ROUTE_PREFIX = "/qwen-token-plan";
-const VERSION = "0.5.6";
+const VERSION = "0.5.7";
 const STATE_TTL_MS = 60_000;
 
 export const Config = z.object({
