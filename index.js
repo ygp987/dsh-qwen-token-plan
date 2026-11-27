@@ -24,7 +24,7 @@ export const inject = ["llm", "timer", "credentials", "webServer"];
 
 const DEFAULT_BASE_URL = "https://token-plan.maas.qianwenaiapi.com/compatible-mode/v1";
 const ROUTE_PREFIX = "/qwen-token-plan";
-const VERSION = "0.5.4";
+const VERSION = "0.5.5";
 const STATE_TTL_MS = 60_000;
 
 export const Config = z.object({
@@ -204,6 +204,34 @@ export function apply(ctx, config = {}) {
 
   // ---- Console data cache ----------------------------------------------------
   const cache = { at: 0, days: 0, data: undefined, pending: undefined };
+  const planCache = { at: 0, data: undefined, pending: undefined };
+
+  /** Lightweight plan-only payload for the composer badge. */
+  async function planPayload(force = false) {
+    if (!force && planCache.data !== undefined && Date.now() - planCache.at < consoleTtl) return planCache.data;
+    if (!force && planCache.pending !== undefined) return planCache.pending;
+    const pending = (async () => {
+      const { cookie } = await readCookie();
+      if (cookie === "") {
+        return { ok: true, configured: false, plan: null, error: "未配置控制台 Cookie" };
+      }
+      try {
+        const plan = await new TokenPlanConsole({ cookie }).plan();
+        return { ok: true, configured: true, plan, error: null };
+      } catch (error) {
+        return { ok: true, configured: true, plan: null, error: errorText(error) };
+      }
+    })();
+    planCache.pending = pending;
+    try {
+      const data = await pending;
+      planCache.data = data;
+      planCache.at = Date.now();
+      return data;
+    } finally {
+      if (planCache.pending === pending) planCache.pending = undefined;
+    }
+  }
 
   async function loadConsole(days, force) {
     const key = Math.min(90, Math.max(1, days));
@@ -414,6 +442,9 @@ export function apply(ctx, config = {}) {
             if (!adapterInstance) return json(res, 503, { ok: false, error: "provider not registered" });
             return json(res, 200, { ok: true, model: await adapterInstance.resolveModel(providerId, id) });
           }
+          if (req.method === "GET" && sub === "plan") {
+            return json(res, 200, await planPayload(false));
+          }
           if (req.method === "POST" && sub === "key") {
             const body = await readJsonBody(req);
             const value = typeof body?.apiKey === "string" ? body.apiKey.trim() : "";
@@ -443,12 +474,16 @@ export function apply(ctx, config = {}) {
             await ctx.credentials.set(consoleCookieEnv, cookie);
             cache.at = 0;
             cache.data = undefined;
+            planCache.at = 0;
+            planCache.data = undefined;
             return json(res, 200, await statePayload(days, true));
           }
           if (req.method === "POST" && sub === "cookie/clear") {
             if (typeof ctx.credentials?.unset === "function") await ctx.credentials.unset(consoleCookieEnv);
             cache.at = 0;
             cache.data = undefined;
+            planCache.at = 0;
+            planCache.data = undefined;
             return json(res, 200, await statePayload(days, true));
           }
           return json(res, 404, { ok: false, error: "not found" });

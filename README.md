@@ -28,7 +28,7 @@ DeepSeek Harness 的 **千问 AI 平台 Token Plan** 接入插件：把订阅变
 - **推理等级**：按官方文档为每个模型接上思考参数——Qwen4 / Qwen3.8 Max 走 `reasoning_effort`（低 / 中 / 高 / 超高），Qwen3.x、GLM 走 `thinking_budget`，DeepSeek V4 只有开 / 关；`glm-5.3` 这类仅思考模型不提供「关闭」。
 - **模型目录（定时同步）**：默认每 30 分钟请求 Token Plan 端点的 `GET /models` 动态发现模型，再与控制台授权信息和内置规格合并；新增/下线模型会通过 `llm/adapters-updated` 通知模型选择器即时刷新。
 - **模型信息**：标注文本 / 视觉 / 推理能力、上下文、最大输出与推理档位。
-- **两个入口**：设置 →「千问 Token Plan」整页控制台；侧边栏同名图标直接打开同一个页面。
+- **三个入口**：输入栏「◔ 剩余 XX%」额度徽标（点击打开控制台）、设置 →「千问 Token Plan」整页控制台、侧边栏同名图标。
 - **Key 与 Cookie 就地配置**：模型 API Key 和控制台 Cookie 都在面板「设置」页填写，写入本机 DSH 凭据，不用手改配置文件或 `~/.dsh/.env`。
 
 ## 安装
