@@ -24,7 +24,7 @@ export const inject = ["llm", "timer", "credentials", "webServer"];
 
 const DEFAULT_BASE_URL = "https://token-plan.maas.qianwenaiapi.com/compatible-mode/v1";
 const ROUTE_PREFIX = "/qwen-token-plan";
-const VERSION = "0.5.5";
+const VERSION = "0.5.6";
 const STATE_TTL_MS = 60_000;
 
 export const Config = z.object({
@@ -213,13 +213,13 @@ export function apply(ctx, config = {}) {
     const pending = (async () => {
       const { cookie } = await readCookie();
       if (cookie === "") {
-        return { ok: true, configured: false, plan: null, error: "未配置控制台 Cookie" };
+        return { ok: true, configured: false, providerId, plan: null, error: "未配置控制台 Cookie" };
       }
       try {
         const plan = await new TokenPlanConsole({ cookie }).plan();
-        return { ok: true, configured: true, plan, error: null };
+        return { ok: true, configured: true, providerId, plan, error: null };
       } catch (error) {
-        return { ok: true, configured: true, plan: null, error: errorText(error) };
+        return { ok: true, configured: true, providerId, plan: null, error: errorText(error) };
       }
     })();
     planCache.pending = pending;

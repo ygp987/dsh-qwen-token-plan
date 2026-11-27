@@ -1,6 +1,6 @@
 {
   "name": "dsh-qwen-token-plan",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "description": "Qianwen Token Plan model provider, quota console and usage dashboard for DeepSeek Harness",
   "icon": "./icon.svg",
   "type": "module",
